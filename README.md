@@ -1,10 +1,7 @@
-A simple blog application.
-Supported features:
-	- add, edit, and remove posts
-	- search functionality
-	- filter posts by their labels
-
-Built using:
-	- React
-	- Typescript
-
+A simple blog application. <br>
+Supported features:<br>
+> - add, edit, and remove posts<br>
+> - search functionality<br>
+> - filter posts by their labels<br>
+<br>
+Built using: React, Typescript <br>
