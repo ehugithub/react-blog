@@ -71,6 +71,18 @@ function App() {
   const [newLabelState, setNewLabelState] = useState(false);
   const [selectedLabels, setSelectedLabels] = useState<label[]>([]);
 
+  const test1:post = {
+    id: 5,
+    title: "xd",
+    date: "xd2",
+    body: "xd3",
+    labels: [ {
+      name: "labele",
+      quantity: 3,
+      id: 4
+    }
+    ]
+  }
 
   const navigate = useNavigate();
 
@@ -110,6 +122,17 @@ function App() {
     };
 
   };
+
+  const handleDeleteLabel = async (labele: label) => {
+    try {
+      await api.delete(`/labels/${labele.id}`);
+      setAllLabels(allLabels.filter(labelee => labelee.id !== labele.id));
+      setSelectedLabels([]);
+    }
+    catch (err: any) {
+      console.log(err.message);
+    }
+  }
 
   const handleEdit = async (id: number) => {
     const curdatetime = format(new Date(), 'MMMM dd yyyy pp');
@@ -161,10 +184,14 @@ function App() {
     }
     else {
       const checkLabels = (post1: post) => {
+        let res = false;
         (post1.labels).forEach(labele => {
-          if(selectedLabels.includes(labele)) return true;
+          if((selectedLabels.some(label => (label.name === labele.name && label.id === labele.id)))) {
+            res = true;
+          }
         })
-        return false;
+
+        return res;
       }
       const evenmorefilteredresults = filteredresults.filter(post => checkLabels(post))
       setSearchResults(evenmorefilteredresults.reverse());
@@ -183,7 +210,8 @@ function App() {
                                   newLabelState={newLabelState}
                                   setNewLabelState={setNewLabelState} 
                                   selectedLabels={selectedLabels}
-                                  setSelectedLabels={setSelectedLabels} /> } />
+                                  setSelectedLabels={setSelectedLabels}
+                                  handleDeleteLabel={handleDeleteLabel} /> } />
         <Route path="post">
           <Route index element={ <NewPost handleSubmit={handleSubmit} title={title} setTitle={setTitle} body={body} setBody={setBody} /> } />
           <Route path=":id" element={ <PostPage handleDelete={handleDelete} posts={posts}/> } />

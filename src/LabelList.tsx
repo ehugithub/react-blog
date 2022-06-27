@@ -13,10 +13,11 @@ interface LabelListProps {
     newLabelState: boolean,
     setNewLabelState: React.Dispatch<React.SetStateAction<boolean>>
     selectedLabels: label[],
-    setSelectedLabels: React.Dispatch<React.SetStateAction<label[]>>
+    setSelectedLabels: React.Dispatch<React.SetStateAction<label[]>>,
+    handleDeleteLabel: (labele: label) => Promise<void>
 };
 
-const LabelList = ({ allLabels, newLabel, setNewLabel, handleSubmitForm, newLabelState, setNewLabelState, selectedLabels, setSelectedLabels }: LabelListProps) => {
+const LabelList = ({ allLabels, newLabel, setNewLabel, handleSubmitForm, newLabelState, setNewLabelState, selectedLabels, setSelectedLabels, handleDeleteLabel }: LabelListProps) => {
     return (
         <div>
             <div>
@@ -35,7 +36,7 @@ const LabelList = ({ allLabels, newLabel, setNewLabel, handleSubmitForm, newLabe
                             <></>
                         }
                         {
-                            allLabels.map(label => <SidebarLabel label={label} selectedLabels={selectedLabels} setSelectedLabels={setSelectedLabels} />)
+                            allLabels.map(label => <SidebarLabel label={label} selectedLabels={selectedLabels} setSelectedLabels={setSelectedLabels} handleDeleteLabel={handleDeleteLabel} />)
                             
                         }
                     </>

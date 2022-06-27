@@ -13,17 +13,18 @@ interface HomeProps {
     newLabelState: boolean,
     setNewLabelState: React.Dispatch<React.SetStateAction<boolean>>,
     selectedLabels: label[],
-    setSelectedLabels: React.Dispatch<React.SetStateAction<label[]>>
+    setSelectedLabels: React.Dispatch<React.SetStateAction<label[]>>,
+    handleDeleteLabel: (labele: label) => Promise<void>
 };
 
-const Home = ({ posts, allLabels, newLabel, setNewLabel, handleSubmitForm, newLabelState, setNewLabelState, selectedLabels, setSelectedLabels }: HomeProps) => {
+const Home = ({ posts, allLabels, newLabel, setNewLabel, handleSubmitForm, newLabelState, setNewLabelState, selectedLabels, setSelectedLabels, handleDeleteLabel }: HomeProps) => {
     return (
         <div className="flex border-8 border-indigo-400 w-full overflow-y-auto relative h-full">
             <div className="w-3/4">
                 {posts.length ? <Posts posts={posts} /> : <div className="mt-9">No post matches the search criteria</div>}
             </div>
             <div>
-                <Sidebar allLabels={allLabels} newLabel={newLabel} setNewLabel={setNewLabel} handleSubmitForm={handleSubmitForm} newLabelState={newLabelState} setNewLabelState={setNewLabelState} selectedLabels={selectedLabels} setSelectedLabels={setSelectedLabels} />
+                <Sidebar allLabels={allLabels} newLabel={newLabel} setNewLabel={setNewLabel} handleSubmitForm={handleSubmitForm} newLabelState={newLabelState} setNewLabelState={setNewLabelState} selectedLabels={selectedLabels} setSelectedLabels={setSelectedLabels} handleDeleteLabel={handleDeleteLabel} />
             </div>
         </div>
     )

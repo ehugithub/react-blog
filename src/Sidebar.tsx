@@ -10,15 +10,16 @@ interface SidebarProps {
     newLabelState: boolean,
     setNewLabelState: React.Dispatch<React.SetStateAction<boolean>>
     selectedLabels: label[],
-    setSelectedLabels: React.Dispatch<React.SetStateAction<label[]>>
+    setSelectedLabels: React.Dispatch<React.SetStateAction<label[]>>,
+    handleDeleteLabel: (labele: label) => Promise<void>
 };
 
-const SideBar = ({ allLabels, newLabel, setNewLabel, handleSubmitForm, newLabelState, setNewLabelState, selectedLabels, setSelectedLabels }: SidebarProps) => {
+const SideBar = ({ allLabels, newLabel, setNewLabel, handleSubmitForm, newLabelState, setNewLabelState, selectedLabels, setSelectedLabels, handleDeleteLabel }: SidebarProps) => {
     return (
         <div className="w-1/4 absolute top-0 right-0 h-full border-4 border-slate-500 overflow-y-auto">
             <div className="m-auto">Sidebar</div>
             <div>
-                <LabelList allLabels={allLabels} newLabel={newLabel} setNewLabel={setNewLabel} handleSubmitForm={handleSubmitForm} newLabelState={newLabelState} setNewLabelState={setNewLabelState} selectedLabels={selectedLabels} setSelectedLabels={setSelectedLabels} />
+                <LabelList allLabels={allLabels} newLabel={newLabel} setNewLabel={setNewLabel} handleSubmitForm={handleSubmitForm} newLabelState={newLabelState} setNewLabelState={setNewLabelState} selectedLabels={selectedLabels} setSelectedLabels={setSelectedLabels} handleDeleteLabel={handleDeleteLabel} />
             </div>
         </div>
     )
