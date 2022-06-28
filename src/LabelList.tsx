@@ -9,7 +9,7 @@ interface LabelListProps {
     allLabels: label[]
     newLabel: string,
     setNewLabel: React.Dispatch<React.SetStateAction<string>>
-    handleSubmitForm: (e: React.FormEvent<HTMLFormElement>) => Promise<void>
+    handleSubmitForm: (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLDivElement, MouseEvent>) => Promise<void>
     newLabelState: boolean,
     setNewLabelState: React.Dispatch<React.SetStateAction<boolean>>
     selectedLabels: label[],
@@ -44,7 +44,7 @@ const LabelList = ({ allLabels, newLabel, setNewLabel, handleSubmitForm, newLabe
                 }
             </div>
             { newLabelState ?
-                <form className="flex flex-row" onSubmit={handleSubmitForm}>
+                <form className="flex flex-row" onSubmit={(e) => {setNewLabelState(false); handleSubmitForm(e);}}> 
                     <FcCancel className="text-2xl cursor-pointer" onClick={(e) => setNewLabelState(false)} />
                     <input required className="w-full mx-1 focus:outline-none focus:ring focus: border-blue-700" type="text" placeholder="New label name..." value={newLabel} onChange={(e) => setNewLabel(e.target.value)}/>
                     <button type="submit" className="text-2xl" ><FcCheckmark /></button>

@@ -6,7 +6,7 @@ interface SidebarProps {
     allLabels: label[]
     newLabel: string,
     setNewLabel: React.Dispatch<React.SetStateAction<string>>
-    handleSubmitForm: (e: React.FormEvent<HTMLFormElement>) => Promise<void>
+    handleSubmitForm: (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLDivElement, MouseEvent>) => Promise<void>
     newLabelState: boolean,
     setNewLabelState: React.Dispatch<React.SetStateAction<boolean>>
     selectedLabels: label[],

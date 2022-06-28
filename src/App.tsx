@@ -70,6 +70,8 @@ function App() {
   const [newLabel, setNewLabel] = useState('');
   const [newLabelState, setNewLabelState] = useState(false);
   const [selectedLabels, setSelectedLabels] = useState<label[]>([]);
+  const [selectedLabelsNp, setSelectedLabelsNp] = useState<label[]>([]);
+  const [selectedLabelsEp, setSelectedLabelsEp] = useState<label[]>([]);
 
   const test1:post = {
     id: 5,
@@ -95,14 +97,27 @@ function App() {
       title: title,
       date: curdatetime,
       body: body,
-      labels: []
+      labels: selectedLabelsNp
     };
     try {
       const response = await api.post('./posts', newpost);
       const updatedposts = [...posts, response.data];
+     
+      for (const labele of selectedLabelsNp) {
+        const newlabele: label = {
+          name: labele.name,
+          quantity: labele.quantity + 1,
+          id: labele.id
+        };
+        const response2 = await api.put(`/labels/${labele.id}`, newlabele);
+        setAllLabels(allLabels.map(l => l.id === labele.id ? {...response2.data} : l))
+      }
+
+
       setPosts(updatedposts);
       setTitle('');
       setBody('');
+      setSelectedLabelsNp([])
       navigate('/');
     }
     catch (err: any) {
@@ -124,6 +139,10 @@ function App() {
   };
 
   const handleDeleteLabel = async (labele: label) => {
+    if(labele.quantity != 0) {
+      alert("Note: you can only delete a label if it has no posts associated with it")
+      return;
+    }
     try {
       await api.delete(`/labels/${labele.id}`);
       setAllLabels(allLabels.filter(labelee => labelee.id !== labele.id));
@@ -134,16 +153,39 @@ function App() {
     }
   }
 
-  const handleEdit = async (id: number) => {
+  const handleEdit = async (id: number, labels: label[]) => {
     const curdatetime = format(new Date(), 'MMMM dd yyyy pp');
     const newPost = {
       id,
       title: editTitle,
       date: curdatetime,
       body: editBody,
-      labels: []
+      labels: selectedLabelsEp
     };
     try {
+      for (const labele of allLabels) {
+        if(labels.some(l => l.id === labele.id) && !(selectedLabelsEp.some(l => l.id === labele.id))) {
+          const newlabele: label = {
+            name: labele.name,
+            quantity: labele.quantity - 1,
+            id: labele.id
+          };
+        
+          const response2 = await api.put(`/labels/${labele.id}`, newlabele);
+          setAllLabels(allLabels.map(l => l.id === labele.id ? {...response2.data} : l))
+        }
+        else if(!(labels.some(l => l.id === labele.id)) && selectedLabelsEp.some(l => l.id === labele.id)) {
+          const newlabele: label = {
+            name: labele.name,
+            quantity: labele.quantity + 1,
+            id: labele.id
+          };
+          
+          const response2 = await api.put(`/labels/${labele.id}`, newlabele);
+          setAllLabels(allLabels.map(l => l.id === labele.id ? {...response2.data} : l))
+        }
+      }
+      
       const response = await api.put(`/posts/${id}`, newPost);
       setPosts(posts.map(post => post.id === id ? {...response.data} : post));
       setEditTitle('');
@@ -157,9 +199,8 @@ function App() {
 
   };
 
-  const handleSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitForm = async (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault();
-    setNewLabelState(false);
     const newid = allLabels.length ? allLabels[allLabels.length - 1].id + 1 : 1;
     const newLabele: label = {
         name: newLabel,
@@ -177,6 +218,7 @@ function App() {
     }
 
   };
+
   useEffect(() => {
     const filteredresults = posts.filter(post => (post.title.toLowerCase()).includes(search.toLowerCase()) || (post.body.toLowerCase()).includes(search.toLowerCase()))
     if(!selectedLabels.length) {
@@ -213,11 +255,36 @@ function App() {
                                   setSelectedLabels={setSelectedLabels}
                                   handleDeleteLabel={handleDeleteLabel} /> } />
         <Route path="post">
-          <Route index element={ <NewPost handleSubmit={handleSubmit} title={title} setTitle={setTitle} body={body} setBody={setBody} /> } />
+          <Route index element={ <NewPost handleSubmit={handleSubmit}
+                                          title={title}
+                                          setTitle={setTitle}
+                                          body={body}
+                                          setBody={setBody}
+                                          handleSubmitForm={handleSubmitForm}
+                                          allLabels={allLabels}
+                                          selectedLabelsNp={selectedLabelsNp}
+                                          setSelectedLabelsNp={setSelectedLabelsNp}
+                                          newLabel={newLabel}
+                                          setNewLabel={setNewLabel}
+                                          /> } />
+
           <Route path=":id" element={ <PostPage handleDelete={handleDelete} posts={posts}/> } />
         </Route>
         <Route path="edit/:id">
-          <Route index element={ <EditPost posts={posts} handleEdit={handleEdit} editTitle={editTitle} setEditTitle={setEditTitle} editBody={editBody} setEditBody={setEditBody} allLabels={allLabels} /> } />
+          <Route index element={ <EditPost
+                                    posts={posts}
+                                    handleEdit={handleEdit}
+                                    editTitle={editTitle}
+                                    setEditTitle={setEditTitle}
+                                    editBody={editBody}
+                                    setEditBody={setEditBody}
+                                    allLabels={allLabels}
+                                    selectedLabelsEp={selectedLabelsEp}
+                                    setSelectedLabelsEp={setSelectedLabelsEp}
+                                    newLabel={newLabel}
+                                    setNewLabel={setNewLabel}
+                                    handleSubmitForm={handleSubmitForm}
+                                    /> } />
           <Route path=":id" element={ <PostPage handleDelete={handleDelete} posts={posts} /> } />
         </Route>
         <Route path="labels">
